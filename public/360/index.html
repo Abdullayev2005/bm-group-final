@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BM Group 360 Tour</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+  <style>
+    #panorama {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .custom-image-hotspot {
+      width: auto;
+      height: auto;
+    }
+
+    .custom-link-button {
+      background-color: #ffffff;
+      color: #005bbb;
+      border: 1px solid #005bbb;
+      border-radius: 6px;
+      font-size: 13px;
+      padding: 6px 10px;
+      font-family: "Segoe UI", sans-serif;
+      display: inline-block;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeInButton 0.5s ease-in forwards 2.5s;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+
+    .custom-link-button:hover {
+      background-color: #005bbb;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeInButton {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="panorama"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<script>
+  pannellum.viewer('panorama', {
+    "type": "equirectangular",
+    "panorama": "360tour.jpg",
+    "autoLoad": true,
+    "showZoomCtrl": false,
+    "showFullscreenCtrl": false,
+    "showControls": false,
+    "hotSpots": [
+      {
+        "pitch": -15,
+        "yaw": 45,
+        "type": "custom",
+        "cssClass": "custom-image-hotspot",
+        createTooltipFunc: function(hotSpotDiv) {
+          const container = document.createElement("div");
+          container.style.display = "flex";
+          container.style.flexDirection = "row";
+          container.style.alignItems = "flex-start";
+          container.style.gap = "16px";
+
+          const img = document.createElement("img");
+          img.src = "model.png";
+          img.style.width = "260px";
+          img.style.height = "auto";
+          container.appendChild(img);
+
+          const messageWrapper = document.createElement("div");
+          messageWrapper.style.display = "flex";
+          messageWrapper.style.flexDirection = "column";
+          messageWrapper.style.maxWidth = "280px";
+
+          const message = document.createElement("div");
+          message.style.background = "#005bbb";
+          message.style.color = "#fff";
+          message.style.padding = "10px 16px";
+          message.style.borderRadius = "12px";
+          message.style.fontSize = "15px";
+          message.style.lineHeight = "1.6";
+          message.style.fontFamily = "Segoe UI, sans-serif";
+          message.style.textAlign = "left";
+          message.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+          message.style.minHeight = "80px";
+          messageWrapper.appendChild(message);
+
+          const button = document.createElement("div");
+          button.innerText = "Asosiy zalga oʻtish";
+          button.className = "custom-link-button";
+          button.onclick = function () {
+            window.location.href = "asosiy.html";
+          };
+          messageWrapper.appendChild(button);
+
+          container.appendChild(messageWrapper);
+          hotSpotDiv.appendChild(container);
+
+          const fullText = "БМ Гроуп қурилиш компаниясига хуш келибсиз. Батафсил маълумот учун катта асосий залга ўтинг.";
+          let i = 0;
+          function typeWriter() {
+            if (i < fullText.length) {
+              message.innerHTML += fullText.charAt(i);
+              i++;
+              setTimeout(typeWriter, 35);
+            }
+          }
+          typeWriter();
+        }
+      }
+    ]
+  });
+</script>
+
+</body>
+</html>

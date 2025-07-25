@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BM Group 360 Tour</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+  <style>
+    #panorama {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .custom-link-button {
+      background-color: #ffffff;
+      color: #005bbb;
+      border: 1px solid #005bbb;
+      border-radius: 6px;
+      font-size: 13px;
+      padding: 6px 10px;
+      font-family: "Segoe UI", sans-serif;
+      display: inline-block;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeInButton 0.5s ease-in forwards 2.5s;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+
+    .custom-link-button:hover {
+      background-color: #005bbb;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeInButton {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="panorama"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<script>
+  function createTextBlock(hotSpotDiv, fullText) {
+    const wrapper = document.createElement("div");
+    wrapper.style.background = "#005bbb";
+    wrapper.style.color = "#fff";
+    wrapper.style.padding = "12px 16px";
+    wrapper.style.borderRadius = "12px";
+    wrapper.style.fontSize = "12px";
+    wrapper.style.lineHeight = "1.6";
+    wrapper.style.fontFamily = "Segoe UI, sans-serif";
+    wrapper.style.textAlign = "left";
+    wrapper.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+    wrapper.style.minWidth = "380px";
+    wrapper.style.maxWidth = "300px";
+
+    const message = document.createElement("div");
+    wrapper.appendChild(message);
+
+    const button = document.createElement("div");
+    button.innerText = "Yana...";
+    button.className = "custom-link-button";
+    wrapper.appendChild(button);
+
+    hotSpotDiv.appendChild(wrapper);
+
+    let i = 0;
+    let isPaused = false;
+    let isExpanded = false;
+    let previewLength = 100; // dastlab 100 harf chiqariladi
+
+    function typeWriter(limit) {
+      if (i < limit) {
+        message.innerHTML += fullText.charAt(i);
+        i++;
+        setTimeout(() => typeWriter(limit), 30);
+      }
+    }
+
+    // Dastlab qisqacha matnni yozib chiqamiz
+    typeWriter(previewLength);
+
+    // Tugma bosilganda qolgan qismi yoziladi
+    button.onclick = function () {
+      if (!isExpanded) {
+        isExpanded = true;
+        button.style.display = "none";
+        typeWriter(fullText.length); // qolgan harflarni yozishda davom etadi
+      }
+    };
+  }
+
+  pannellum.viewer('panorama', {
+    "type": "equirectangular",
+    "panorama": "panorama.jpg",
+    "autoLoad": true,
+    "showZoomCtrl": false,
+    "showFullscreenCtrl": false,
+    "showControls": false,
+    "hotSpots": [
+      {
+        "pitch": 10,
+        "yaw": 190,
+        "type": "custom",
+        createTooltipFunc: function(hotSpotDiv) {
+          createTextBlock(hotSpotDiv,
+            `Sergeli tumani, Yangi Shoshtepa Jun ariq ko’chasida 12-16 qavatli binolardan tashkil topgan zamonaviy yangi shaharcha. Bu yerda farovon yashash uchun barcha sharoitlar yaratilgan: maktab, bog‘cha, do‘konlar va transport qulayligi.`
+          );
+        }
+      },
+      {
+        "pitch": 10,
+        "yaw": 140,
+        "type": "custom",
+        createTooltipFunc: function(hotSpotDiv) {
+          createTextBlock(hotSpotDiv,
+            `Go’zal poytaxtimizning tarixiy Shayxontoxur tumani, Samarqand Darvoza ko’chasida qurilayotgan turar-joy majmuamiz. U fransuz uslubidagi fasadga, yashil hududga va rivojlangan infratuzilmaga ega bo‘lib, yuqori sifatli hayot tarzini taklif etadi.`
+          );
+        }
+      },
+      {
+        "pitch": 5,
+        "yaw": -10,
+        "type": "custom",
+        createTooltipFunc: function(hotSpotDiv) {
+          createTextBlock(hotSpotDiv,
+            `Chilonzor tumani, Tersakabad ko’chasida 16 qavatli binolardan tashkil topgan zamonaviy yangi shaharcha barpo etilmoqda. Loyiha doirasida ko‘plab savdo nuqtalari, bolalar maydonchasi, sport zonasi va keng avtoturargoh mavjud`
+          );
+        }
+      }
+    ]
+  });
+</script>
+
+</body>
+</html>
