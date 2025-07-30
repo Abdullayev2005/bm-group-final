@@ -12,11 +12,17 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="uz">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="google6ca257423078377b.html"
+        />
+      </head>
       <body>
         <Navbar />
         {children}
-        <ChatButton/>
-        <Footer/>
+        <ChatButton />
+        <Footer />
       </body>
     </html>
   );
