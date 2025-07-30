@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- Asosiy sahifalar -->
   <url>
     <loc>https://bm-group-company.uz/</loc>
-    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <url>
-    <loc>https://bm-group-company.uz/news</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://bm-group-company.uz/properties</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://bm-group-company.uz/residences</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
   <url>
     <loc>https://bm-group-company.uz/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bm-group-company.uz/properties</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bm-group-company.uz/news</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Turar joy majmualari -->
+  <url>
+    <loc>https://bm-group-company.uz/residences/charx</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bm-group-company.uz/residences/dombrovot</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bm-group-company.uz/residences/qoyliq</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bm-group-company.uz/residences/sergeli</loc>
+    <priority>0.7</priority>
   </url>
 
 </urlset>
