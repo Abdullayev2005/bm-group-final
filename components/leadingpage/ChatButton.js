@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { IoChatbubbleEllipsesOutline, IoClose } from 'react-icons/io5';
 
 export default function ChatButton() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(true);
 
-  // Chat tarixini yuklash
   useEffect(() => {
     const savedMessages = localStorage.getItem('bm_chat_history');
     if (savedMessages) {
@@ -71,9 +72,30 @@ export default function ChatButton() {
     if (e.key === 'Enter') handleSend();
   };
 
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-6 left-6 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full z-50 shadow-lg"
+        aria-label="Open chat"
+      >
+        <IoChatbubbleEllipsesOutline className="text-2xl" />
+      </button>
+    );
+  }
+
   return (
     <div className="fixed bottom-6 left-6 w-80 h-96 bg-white shadow-xl rounded-2xl p-4 flex flex-col z-50">
-      <div className="text-lg font-semibold border-b pb-2 mb-2">BM Group Chat</div>
+      <div className="flex justify-between items-center border-b pb-2 mb-2">
+        <div className="text-lg font-semibold">BM Group Chat</div>
+        <button
+          onClick={() => setOpen(false)}
+          className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 text-gray-600 hover:text-red-500 transition"
+          aria-label="Close chat"
+        >
+          <IoClose className="text-xl" />
+        </button>
+      </div>
       <div className="flex-1 overflow-y-auto space-y-2 text-sm pr-1">
         {messages.map((msg, i) => (
           <div

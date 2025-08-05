@@ -5,13 +5,11 @@ import { useState, useEffect } from 'react';
 
 export default function AboutCertificate() {
   const certificates = [
-    '/about_image/hijjat1.jpg',
     '/about_image/hijjat2.jpg',
     '/about_image/hijjat3.jpg',
-    '/about_image/hijjat4.jpg',
     '/about_image/hijjat5.jpg',
-    
   ];
+
   const [current, setCurrent] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -67,49 +65,43 @@ export default function AboutCertificate() {
 
       {/* Modal – Telegram uslubida */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-  <div className="relative max-w-2xl w-full px-4 pt-20 overflow-visible">
-
-
-    {/* ✅ RASM */}
-    <Image
-      src={certificates[current]}
-      alt="Modal rasm"
-      width={500}
-      height={800}
-      className="w-full h-auto object-contain rounded-xl shadow-2xl"
-    />
-
-    {/* ✅ Yopish tugmasi – rasm tepasida EMAS, rasm yuqorisidan tashqarida */}
-       <button
-  onClick={closeModal}
-  className="absolute top-2 right-2 z-[9999] w-10 h-10 bg-white/30 text-white text-2xl rounded-full flex items-center justify-center hover:bg-red-600 hover:scale-110 transition duration-300"
->
-  &times;
-</button>
-
-
-
-    {/* ✅ Oldingi tugma – rasm CHAP TASHQARISIDA */}
+  <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+    {/* ✅ Har doim ekranning yuqori o‘ng burchagida ko‘rinadigan X tugma */}
     <button
-      onClick={prevSlide}
-      className="absolute top-1/2 -translate-y-1/2 -left-16 z-[9999] w-12 h-12 bg-white/20 text-white text-3xl rounded-full flex items-center justify-center hover:bg-blue-600 hover:scale-110 transition duration-300"
+      onClick={closeModal}
+      className="fixed top-6 right-6 z-[9999] w-10 h-10 bg-white/30 text-white text-2xl rounded-full flex items-center justify-center hover:bg-red-600 hover:scale-110 transition duration-300"
     >
-      &#8592;
+      &times;
     </button>
 
-    {/* ✅ Keyingi tugma – rasm O‘NG TASHQARISIDA */}
-    <button
-      onClick={nextSlide}
-      className="absolute top-1/2 -translate-y-1/2 -right-16 z-[9999] w-12 h-12 bg-white/20 text-white text-3xl rounded-full flex items-center justify-center hover:bg-blue-600 hover:scale-110 transition duration-300"
-    >
-      &#8594;
-    </button>
+    <div className="relative max-w-2xl w-full px-4 pt-20 overflow-visible">
+      {/* RASM */}
+      <Image
+        src={certificates[current]}
+        alt="Modal rasm"
+        width={500}
+        height={800}
+        className="w-full h-auto object-contain rounded-xl shadow-2xl"
+      />
 
+      {/* Oldingi tugma */}
+      <button
+        onClick={prevSlide}
+        className="absolute top-1/2 -translate-y-1/2 -left-16 z-[9999] w-12 h-12 bg-white/20 text-white text-3xl rounded-full flex items-center justify-center hover:bg-blue-600 hover:scale-110 transition duration-300"
+      >
+        &#8592;
+      </button>
+
+      {/* Keyingi tugma */}
+      <button
+        onClick={nextSlide}
+        className="absolute top-1/2 -translate-y-1/2 -right-16 z-[9999] w-12 h-12 bg-white/20 text-white text-3xl rounded-full flex items-center justify-center hover:bg-blue-600 hover:scale-110 transition duration-300"
+      >
+        &#8594;
+      </button>
+    </div>
   </div>
-</div>
-
-      )}
+)}
 
     </section>
   );

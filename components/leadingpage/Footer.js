@@ -19,7 +19,7 @@ export default function Footer() {
             <ul className="text-sm space-y-2">
               <li>📍 Shayxontohur tumani, Samarqand Darvoza ko‘chasi</li>
               <li>📞 <a href="tel:+998785550077" className="hover:underline">+998 78 555 00 77</a></li>
-              <li>🕒 Dushanba – Shanba, 09:00 – 18:00</li>
+              <li>🕒 Har kuni 09:00 – 19:00</li>
             </ul>
           </div>
 

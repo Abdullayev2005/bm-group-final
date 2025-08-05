@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import Image from 'next/image';
@@ -15,12 +15,39 @@ import {
 export default function KalculatorPage() {
   const [area, setArea] = useState([0, 500]);
   const [price, setPrice] = useState([50, 800]);
-  const [floor, setFloor] = useState([-1, 16]); // ✅ 16 qavatgacha
+  const [floor, setFloor] = useState([-1, 16]);
+
+  const [areaInput, setAreaInput] = useState(['0', '500']);
+  const [priceInput, setPriceInput] = useState(['50', '800']);
+  const [floorInput, setFloorInput] = useState(['-1', '16']);
+
   const [activeRoom, setActiveRoom] = useState(2);
   const [selectedYear, setSelectedYear] = useState(2025);
 
   const rooms = [1, 2, 3];
-  const years = [2025, 2026];
+  const years = [2026, 2027];
+
+  // Inputni string holatda boshqarish
+  const handleStringInputChange = (value, index, setter) => {
+    setter((prev) => {
+      const updated = [...prev];
+      updated[index] = value;
+      return updated;
+    });
+  };
+
+  // useEffect orqali string inputlardan number holatga o‘tkazamiz
+  useEffect(() => {
+    setArea([parseFloat(areaInput[0]) || 0, parseFloat(areaInput[1]) || 0]);
+  }, [areaInput]);
+
+  useEffect(() => {
+    setPrice([parseFloat(priceInput[0]) || 0, parseFloat(priceInput[1]) || 0]);
+  }, [priceInput]);
+
+  useEffect(() => {
+    setFloor([parseFloat(floorInput[0]) || 0, parseFloat(floorInput[1]) || 0]);
+  }, [floorInput]);
 
   const filteredProperties = propertiesData.filter((property) => {
     const totalPrice = parseInt(property.price.replace(/\s/g, '').replace('UZS', '')) / 1_000_000;
@@ -70,6 +97,7 @@ export default function KalculatorPage() {
           </div>
         </div>
 
+        {/* YIL TANLOVI */}
         <div className="mt-2">
           <label className="block text-sm text-[#1E2A64] mb-1">Topshirish muddati:</label>
           <div className="flex gap-2">
@@ -85,82 +113,119 @@ export default function KalculatorPage() {
           </div>
         </div>
 
+        {/* SLIDERLAR */}
         <div className="grid md:grid-cols-3 gap-6 mt-4">
           {/* Maydon */}
           <div>
             <label className="block text-sm mb-1 text-[#1E2A64]">Maydon, m²</label>
             <div className="flex gap-2 items-center">
-              <input type="number" value={area[0]} className="border border-[#1E2A64] px-2 py-1 w-24" readOnly />
-              <span className="text-xs">m²</span>
-              <input type="number" value={area[1]} className="border border-[#1E2A64] px-2 py-1 w-24" readOnly />
-              <span className="text-xs">m²</span>
-            </div>
-            <div className="w-full mt-2">
-              <Slider
-                range
-                min={0}
-                max={500}
-                value={area}
-                onChange={(value) => setArea(value)}
-                trackStyle={[{ backgroundColor: '#0B2273' }]}
-                handleStyle={[
-                  { backgroundColor: '#738CC6', borderColor: '#0B2273' },
-                  { backgroundColor: '#738CC6', borderColor: '#0B2273' }
-                ]}
+              <input
+                type="number"
+                value={areaInput[0]}
+                onChange={(e) => handleStringInputChange(e.target.value, 0, setAreaInput)}
+                className="border border-[#1E2A64] px-2 py-1 w-24"
               />
+              <span className="text-xs">m²</span>
+              <input
+                type="number"
+                value={areaInput[1]}
+                onChange={(e) => handleStringInputChange(e.target.value, 1, setAreaInput)}
+                className="border border-[#1E2A64] px-2 py-1 w-24"
+              />
+              <span className="text-xs">m²</span>
             </div>
+            <Slider
+              range
+              min={0}
+              max={500}
+              value={area}
+              onChange={(value) => {
+                setArea(value);
+                setAreaInput([value[0].toString(), value[1].toString()]);
+              }}
+              className="mt-2"
+              trackStyle={[{ backgroundColor: '#0B2273' }]}
+              handleStyle={[
+                { backgroundColor: '#738CC6', borderColor: '#0B2273' },
+                { backgroundColor: '#738CC6', borderColor: '#0B2273' }
+              ]}
+            />
           </div>
 
           {/* Narx */}
           <div>
             <label className="block text-sm mb-1 text-[#1E2A64]">Umumiy narx, million UZS</label>
             <div className="flex gap-2 items-center">
-              <input type="number" value={price[0]} className="border border-[#1E2A64] px-2 py-1 w-24" readOnly />
-              <span className="text-xs">mln</span>
-              <input type="number" value={price[1]} className="border border-[#1E2A64] px-2 py-1 w-24" readOnly />
-              <span className="text-xs">mln</span>
-            </div>
-            <div className="w-full mt-2">
-              <Slider
-                range
-                min={50}
-                max={800}
-                value={price}
-                onChange={(value) => setPrice(value)}
-                trackStyle={[{ backgroundColor: '#0B2273' }]}
-                handleStyle={[
-                  { backgroundColor: '#738CC6', borderColor: '#0B2273' },
-                  { backgroundColor: '#738CC6', borderColor: '#0B2273' }
-                ]}
+              <input
+                type="number"
+                value={priceInput[0]}
+                onChange={(e) => handleStringInputChange(e.target.value, 0, setPriceInput)}
+                className="border border-[#1E2A64] px-2 py-1 w-24"
               />
+              <span className="text-xs">mln</span>
+              <input
+                type="number"
+                value={priceInput[1]}
+                onChange={(e) => handleStringInputChange(e.target.value, 1, setPriceInput)}
+                className="border border-[#1E2A64] px-2 py-1 w-24"
+              />
+              <span className="text-xs">mln</span>
             </div>
+            <Slider
+              range
+              min={50}
+              max={800}
+              value={price}
+              onChange={(value) => {
+                setPrice(value);
+                setPriceInput([value[0].toString(), value[1].toString()]);
+              }}
+              className="mt-2"
+              trackStyle={[{ backgroundColor: '#0B2273' }]}
+              handleStyle={[
+                { backgroundColor: '#738CC6', borderColor: '#0B2273' },
+                { backgroundColor: '#738CC6', borderColor: '#0B2273' }
+              ]}
+            />
           </div>
 
           {/* Qavat */}
           <div>
             <label className="block text-sm mb-1 text-[#1E2A64]">Qavat</label>
             <div className="flex gap-2 items-center">
-              <input type="number" value={floor[0]} className="border border-[#1E2A64] px-2 py-1 w-24" readOnly />
-              <input type="number" value={floor[1]} className="border border-[#1E2A64] px-2 py-1 w-24" readOnly />
-            </div>
-            <div className="w-full mt-2">
-              <Slider
-                range
-                min={-1}
-                max={16} // ✅ 16 qavat
-                value={floor}
-                onChange={(value) => setFloor(value)}
-                trackStyle={[{ backgroundColor: '#0B2273' }]}
-                handleStyle={[
-                  { backgroundColor: '#738CC6', borderColor: '#0B2273' },
-                  { backgroundColor: '#738CC6', borderColor: '#0B2273' }
-                ]}
+              <input
+                type="number"
+                value={floorInput[0]}
+                onChange={(e) => handleStringInputChange(e.target.value, 0, setFloorInput)}
+                className="border border-[#1E2A64] px-2 py-1 w-24"
+              />
+              <input
+                type="number"
+                value={floorInput[1]}
+                onChange={(e) => handleStringInputChange(e.target.value, 1, setFloorInput)}
+                className="border border-[#1E2A64] px-2 py-1 w-24"
               />
             </div>
+            <Slider
+              range
+              min={-1}
+              max={16}
+              value={floor}
+              onChange={(value) => {
+                setFloor(value);
+                setFloorInput([value[0].toString(), value[1].toString()]);
+              }}
+              className="mt-2"
+              trackStyle={[{ backgroundColor: '#0B2273' }]}
+              handleStyle={[
+                { backgroundColor: '#738CC6', borderColor: '#0B2273' },
+                { backgroundColor: '#738CC6', borderColor: '#0B2273' }
+              ]}
+            />
           </div>
         </div>
 
-        {/* Filtrlangan obyektlar */}
+        {/* NATIJALAR */}
         <section className="max-w-7xl mx-auto px-0 pt-12">
           <h2 className="text-xl font-semibold text-[#1E2A64] mb-4">Sizga moslari</h2>
 

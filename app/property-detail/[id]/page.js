@@ -5,7 +5,7 @@ import {
   TbBuildingSkyscraper,
   TbRulerMeasure,
 } from 'react-icons/tb';
-import ClientGallery from './ClientGallery'; // 👈 ichki client komponent
+import ClientGallery from './ClientGallery';
 
 export function generateStaticParams() {
   return propertiesData.map((property) => ({
@@ -13,7 +13,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function Page({ params }) {
+// ✅ Async qilib tuzildi
+export default async function Page({ params }) {
   const { id } = params;
   const property = propertiesData.find((p) => p.id === Number(id));
 
@@ -47,25 +48,27 @@ export default function Page({ params }) {
         ))}
       </div>
 
-      {/* 👇 Client component faqat rasm galereyasi uchun */}
       <ClientGallery gallery={property.gallery} price={property.price} />
 
       <h3 className="text-xl font-bold mb-4">O‘xshash variantlar</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-        {propertiesData.slice(0, 8).map((item) => (
-          <div key={item.id} className="border rounded-md p-2 hover:shadow-md transition text-sm">
-            <div className="relative h-40 w-full mb-2">
-              <Image src={item.img} alt={item.title} fill className="object-contain" />
+        {propertiesData
+          .filter((item) => item.id !== property.id) // o‘zini chiqarib tashlash
+          .slice(0, 8)
+          .map((item) => (
+            <div key={item.id} className="border rounded-md p-2 hover:shadow-md transition text-sm">
+              <div className="relative h-40 w-full mb-2">
+                <Image src={item.img} alt={item.title} fill className="object-contain" />
+              </div>
+              <p className="font-medium">{item.title}</p>
+              <p className="text-[#737A94]">{item.price}</p>
+              <div className="flex flex-wrap gap-2 mt-2 text-xs text-[#737A94]">
+                <span><TbCalendarEvent className="inline-block mr-1" />{item.date}</span>
+                <span><TbBuildingSkyscraper className="inline-block mr-1" />{item.floors}</span>
+                <span><TbRulerMeasure className="inline-block mr-1" />{item.size}</span>
+              </div>
             </div>
-            <p className="font-medium">{item.title}</p>
-            <p className="text-[#737A94]">{item.price}</p>
-            <div className="flex flex-wrap gap-2 mt-2 text-xs text-[#737A94]">
-              <span><TbCalendarEvent className="inline-block mr-1" />{item.date}</span>
-              <span><TbBuildingSkyscraper className="inline-block mr-1" />{item.floors}</span>
-              <span><TbRulerMeasure className="inline-block mr-1" />{item.size}</span>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
