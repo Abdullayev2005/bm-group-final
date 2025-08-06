@@ -79,7 +79,7 @@ export default function AboutInfoSection() {
           <li className="flex items-start">
             <FiLayers size={32} className="text-amber-500 flex-shrink-0 mt-1" />
             <div className="ml-4">
-              <h3 className="text-2xl font-semibold">20+ ob’yekt</h3>
+              <h3 className="text-2xl font-semibold">20+ obyekt</h3>
               <p className="text-gray-700 mt-1">
                 Biznes, komfort va iqtisod darajasidagi eng qulay joylashuvga ega 
                 bo‘lgan turar-joy majmualari allaqachon foydalanishga topshirilgan.
