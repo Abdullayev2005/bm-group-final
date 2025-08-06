@@ -57,7 +57,7 @@ export default function AboutAchievements() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Heading */}
         <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-          <span className="text-[#C5A46D] font-bold">BM GROUP</span> 2013 yildan buyon Ozbekiston bozorida faoliyat yuritib kelmoqda.
+          <span className="text-[#C5A46D] font-bold">BM GROUP</span> 2013 yildan buyon O‘zbekiston bozorida faoliyat yuritib kelmoqda.
         </h1>
 
         {/* Description */}
