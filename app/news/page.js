@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import dummyNews from '../data/news';
+import dummyNews from '../data/newsData';
 export default function NewsCard() {
   return (
     <section className="pt-30 max-w-7xl mx-auto px-6 py-12">
