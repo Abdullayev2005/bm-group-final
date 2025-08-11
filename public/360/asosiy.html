@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
   <meta charset="utf-8">
   <title>BM Group 360 Tour</title>
@@ -33,9 +33,7 @@
     }
 
     @keyframes fadeInButton {
-      to {
-        opacity: 1;
-      }
+      to { opacity: 1; }
     }
   </style>
 </head>
@@ -45,6 +43,24 @@
 
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script>
+  // 🔹 1. Matnlarni ikki tilda saqlaymiz
+  const texts = {
+    uz: [
+      "Sergeli tumani, Yangi Shoshtepa Jun ariq ko’chasida 12-16 qavatli binolardan tashkil topgan zamonaviy yangi shaharcha. Bu yerda farovon yashash uchun barcha sharoitlar yaratilgan: maktab, bog‘cha, do‘konlar va transport qulayligi.",
+      "Go’zal poytaxtimizning tarixiy Shayxontoxur tumani, Samarqand Darvoza ko’chasida qurilayotgan turar-joy majmuamiz. U fransuz uslubidagi fasadga, yashil hududga va rivojlangan infratuzilmaga ega bo‘lib, yuqori sifatli hayot tarzini taklif etadi.",
+      "Chilonzor tumani, Tersakabad ko’chasida 16 qavatli binolardan tashkil topgan zamonaviy yangi shaharcha barpo etilmoqda. Loyiha doirasida ko‘plab savdo nuqtalari, bolalar maydonchasi, sport zonasi va keng avtoturargoh mavjud."
+    ],
+    ru: [
+      "Современный новый городок в Сергели, на улице Янги Шоштепа Джун ариқ, состоящий из 12-16 этажных зданий. Здесь созданы все условия для комфортной жизни: школа, детский сад, магазины и удобный транспорт.",
+      "Наш жилой комплекс в историческом Шайхонтохурском районе на улице Самарканд Дарвоза. Он имеет фасад в французском стиле, зеленую территорию и развитую инфраструктуру, предлагая высокий уровень жизни.",
+      "В Чиланзарском районе, на улице Терсакобод, возводится современный новый городок из 16-этажных зданий. В проекте предусмотрены торговые точки, детская площадка, спортивная зона и просторная парковка."
+    ]
+  };
+
+  // 🔹 2. Navbar’da tanlangan tilni localStorage’dan olish
+  const lang = localStorage.getItem("lang") || "uz";
+
+  // 🔹 3. Hotspot matn bloki yaratish funksiyasi
   function createTextBlock(hotSpotDiv, fullText) {
     const wrapper = document.createElement("div");
     wrapper.style.background = "#005bbb";
@@ -63,16 +79,15 @@
     wrapper.appendChild(message);
 
     const button = document.createElement("div");
-    button.innerText = "Yana...";
+    button.innerText = lang === "uz" ? "Yana..." : "Ещё...";
     button.className = "custom-link-button";
     wrapper.appendChild(button);
 
     hotSpotDiv.appendChild(wrapper);
 
     let i = 0;
-    let isPaused = false;
     let isExpanded = false;
-    let previewLength = 100; // dastlab 100 harf chiqariladi
+    let previewLength = 100;
 
     function typeWriter(limit) {
       if (i < limit) {
@@ -82,19 +97,18 @@
       }
     }
 
-    // Dastlab qisqacha matnni yozib chiqamiz
     typeWriter(previewLength);
 
-    // Tugma bosilganda qolgan qismi yoziladi
     button.onclick = function () {
       if (!isExpanded) {
         isExpanded = true;
         button.style.display = "none";
-        typeWriter(fullText.length); // qolgan harflarni yozishda davom etadi
+        typeWriter(fullText.length);
       }
     };
   }
 
+  // 🔹 4. Pannellum viewer sozlamalari
   pannellum.viewer('panorama', {
     "type": "equirectangular",
     "panorama": "panorama.jpg",
@@ -108,9 +122,7 @@
         "yaw": 190,
         "type": "custom",
         createTooltipFunc: function(hotSpotDiv) {
-          createTextBlock(hotSpotDiv,
-            `Sergeli tumani, Yangi Shoshtepa Jun ariq ko’chasida 12-16 qavatli binolardan tashkil topgan zamonaviy yangi shaharcha. Bu yerda farovon yashash uchun barcha sharoitlar yaratilgan: maktab, bog‘cha, do‘konlar va transport qulayligi.`
-          );
+          createTextBlock(hotSpotDiv, texts[lang][0]);
         }
       },
       {
@@ -118,9 +130,7 @@
         "yaw": 140,
         "type": "custom",
         createTooltipFunc: function(hotSpotDiv) {
-          createTextBlock(hotSpotDiv,
-            `Go’zal poytaxtimizning tarixiy Shayxontoxur tumani, Samarqand Darvoza ko’chasida qurilayotgan turar-joy majmuamiz. U fransuz uslubidagi fasadga, yashil hududga va rivojlangan infratuzilmaga ega bo‘lib, yuqori sifatli hayot tarzini taklif etadi.`
-          );
+          createTextBlock(hotSpotDiv, texts[lang][1]);
         }
       },
       {
@@ -128,9 +138,7 @@
         "yaw": -10,
         "type": "custom",
         createTooltipFunc: function(hotSpotDiv) {
-          createTextBlock(hotSpotDiv,
-            `Chilonzor tumani, Tersakabad ko’chasida 16 qavatli binolardan tashkil topgan zamonaviy yangi shaharcha barpo etilmoqda. Loyiha doirasida ko‘plab savdo nuqtalari, bolalar maydonchasi, sport zonasi va keng avtoturargoh mavjud`
-          );
+          createTextBlock(hotSpotDiv, texts[lang][2]);
         }
       }
     ]

@@ -12,9 +12,17 @@ import {
   TbRulerMeasure,
 } from 'react-icons/tb';
 
+// yordamchi: million UZSga aylantirish (UZS matndan)
+const parseMillion = (t) => {
+  const n = (t || '')
+    .toString()
+    .replace(/[^0-9]/g, ''); // barcha raqamdan tashqarilarni olib tashlaydi (shu jumladan NBSP)
+  return n ? Number(n) / 1_000_000 : 0;
+};
+
 export default function KalculatorPage() {
   const [area, setArea] = useState([0, 500]);
-  const [price, setPrice] = useState([50, 800]);
+  const [price, setPrice] = useState([50, 800]); // mln UZS
   const [floor, setFloor] = useState([-1, 16]);
 
   const [areaInput, setAreaInput] = useState(['0', '500']);
@@ -22,10 +30,10 @@ export default function KalculatorPage() {
   const [floorInput, setFloorInput] = useState(['-1', '16']);
 
   const [activeRoom, setActiveRoom] = useState(2);
-  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedYear, setSelectedYear] = useState(2026); // faqat 2026
 
   const rooms = [1, 2, 3];
-  const years = [2026, 2027];
+  const years = [2026];
 
   // Inputni string holatda boshqarish
   const handleStringInputChange = (value, index, setter) => {
@@ -36,7 +44,7 @@ export default function KalculatorPage() {
     });
   };
 
-  // useEffect orqali string inputlardan number holatga o‘tkazamiz
+  // string inputlardan number state ga o'tkazish
   useEffect(() => {
     setArea([parseFloat(areaInput[0]) || 0, parseFloat(areaInput[1]) || 0]);
   }, [areaInput]);
@@ -49,17 +57,28 @@ export default function KalculatorPage() {
     setFloor([parseFloat(floorInput[0]) || 0, parseFloat(floorInput[1]) || 0]);
   }, [floorInput]);
 
+  // Filtrlash
   const filteredProperties = propertiesData.filter((property) => {
-    const totalPrice = parseInt(property.price.replace(/\s/g, '').replace('UZS', '')) / 1_000_000;
-    const areaValue = parseFloat(property.size.match(/\d+(\.\d+)?/)[0]);
-    const floorValue = parseInt(property.floors.split('/')[0]);
-    const yearValue = parseInt(property.date.split('/')[1]);
-    const roomCount = parseInt(property.title.match(/\d+/)[0]);
+    // narx (faqat UZS): totalPrice bo'lsa o'sha, bo'lmasa price
+    const totalPriceMln = parseMillion(property.totalPrice || property.price);
+
+    // maydon m²
+    const areaValue = parseFloat((property.size || '').match(/\d+(\.\d+)?/)?.[0] || 0);
+
+    // qavat: floors -> "8/16", yoki floorsText, yoki floor raqami
+    const floorsText = property.floors || property.floorsText || (property.floor ? `${property.floor}/16` : '0/0');
+    const floorValue = parseInt(floorsText.split('/')[0]) || 0;
+
+    // yil (MM/YYYY)
+    const yearValue = parseInt((property.date || '0/0').split('/')[1]) || 0;
+
+    // xonalar soni (title dan)
+    const roomCount = parseInt((property.title || '').match(/\d+/)?.[0] || 0);
 
     return (
       roomCount === activeRoom &&
       areaValue >= area[0] && areaValue <= area[1] &&
-      totalPrice >= price[0] && totalPrice <= price[1] &&
+      totalPriceMln >= price[0] && totalPriceMln <= price[1] &&
       floorValue >= floor[0] && floorValue <= floor[1] &&
       yearValue === selectedYear
     );
@@ -70,6 +89,7 @@ export default function KalculatorPage() {
       <h2 className="text-3xl font-bold text-[#1E2A64] mb-6">Ko'chmas mulk</h2>
 
       <div className="p-6 space-y-4">
+        {/* Filter tugmalari */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex border border-[#1E2A64]">
             <button className="w-[120px] h-[48px] bg-white text-[#1E2A64] font-medium">Barchasi</button>
@@ -97,7 +117,7 @@ export default function KalculatorPage() {
           </div>
         </div>
 
-        {/* YIL TANLOVI */}
+        {/* Yil tanlovi */}
         <div className="mt-2">
           <label className="block text-sm text-[#1E2A64] mb-1">Topshirish muddati:</label>
           <div className="flex gap-2">
@@ -113,7 +133,7 @@ export default function KalculatorPage() {
           </div>
         </div>
 
-        {/* SLIDERLAR */}
+        {/* Sliders */}
         <div className="grid md:grid-cols-3 gap-6 mt-4">
           {/* Maydon */}
           <div>
@@ -225,46 +245,64 @@ export default function KalculatorPage() {
           </div>
         </div>
 
-        {/* NATIJALAR */}
+        {/* Natijalar */}
         <section className="max-w-7xl mx-auto px-0 pt-12">
           <h2 className="text-xl font-semibold text-[#1E2A64] mb-4">Sizga moslari</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProperties.map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.link}
-                className="border bg-white border-[#CBD5E1] rounded-lg overflow-hidden hover:shadow-md transition"
-              >
-                <div className="h-48 relative">
-                  <Image
-                    src={item.img}
-                    alt={item.title}
-                    fill
-                    className="object-contain p-4"
-                  />
-                </div>
-                <div className="p-4 border-t border-[#CBD5E1]">
-                  <h3 className="text-[#1E2A64] text-base font-medium mb-1">{item.title}</h3>
-                  <p className="text-[#1E2A64] text-sm font-semibold mb-3">{item.price}</p>
+            {filteredProperties.map((item, idx) => {
+              const CardInner = (
+                <>
+                  <div className="h-48 relative">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      fill
+                      className="object-contain p-4"
+                    />
+                  </div>
+                  <div className="p-4 border-t border-[#CBD5E1]">
+                    <h3 className="text-[#1E2A64] text-base font-medium mb-1">{item.title}</h3>
+                    <p className="text-[#1E2A64] text-sm font-semibold mb-3">
+                      {item.totalPrice || item.price}
+                    </p>
 
-                  <div className="flex flex-wrap text-xs text-[#1E2A64] gap-x-3 gap-y-1">
-                    <div className="flex items-center gap-1">
-                      <TbCalendarEvent className="text-[#1E2A64]" />
-                      {item.date}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TbBuildingSkyscraper className="text-[#1E2A64]" />
-                      {item.floors}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TbRulerMeasure className="text-[#1E2A64]" />
-                      {item.size}
+                    <div className="flex flex-wrap text-xs text-[#1E2A64] gap-x-3 gap-y-1">
+                      <div className="flex items-center gap-1">
+                        <TbCalendarEvent className="text-[#1E2A64]" />
+                        {item.date}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <TbBuildingSkyscraper className="text-[#1E2A64]" />
+                        {item.floors || item.floorsText || (item.floor ? `${item.floor}/16` : '—')}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <TbRulerMeasure className="text-[#1E2A64]" />
+                        {item.size}
+                      </div>
                     </div>
                   </div>
+                </>
+              );
+
+              // Agar link bor bo‘lsa — Link, bo‘lmasa oddiy karta div
+              return item.link ? (
+                <Link
+                  key={idx}
+                  href={item.link}
+                  className="border bg-white border-[#CBD5E1] rounded-lg overflow-hidden hover:shadow-md transition"
+                >
+                  {CardInner}
+                </Link>
+              ) : (
+                <div
+                  key={idx}
+                  className="border bg-white border-[#CBD5E1] rounded-lg overflow-hidden"
+                >
+                  {CardInner}
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
 
           {filteredProperties.length === 0 && (

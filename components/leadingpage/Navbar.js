@@ -8,13 +8,17 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { FaChevronDown } from 'react-icons/fa';
 import { TbBuildingSkyscraper } from 'react-icons/tb';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar() {
-  const [lang, setLang] = useState('UZ');
+  const { t, i18n } = useTranslation();
+  const [lang, setLang] = useState(i18n.language.toUpperCase());
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false); // 🔹 yangi til oynasi state
   const [scrolled, setScrolled] = useState(false);
-  const dropdownRef = useRef(null); // 🔹 dropdown containerga ref
+  const dropdownRef = useRef(null);
+  const langRef = useRef(null); // 🔹 til tanlash oynasini yopish uchun ref
 
   const isDarkNavbarPage = ['/properties', '/residences', '/property-detail', '/news'].some(path =>
     pathname.startsWith(path)
@@ -26,29 +30,35 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 🔸 Sahifadagi boshqa joy bosilganda dropdownni yopish
+  // 🔹 Boshqa joyga bosilganda yopish (til va dropdown uchun)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setIsLangOpen(false);
+      }
     };
-
-    if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isDropdownOpen]);
+  }, []);
+
+  const changeLang = (newLang) => {
+    i18n.changeLanguage(newLang.toLowerCase());
+    setLang(newLang.toUpperCase());
+    localStorage.setItem('lang', newLang.toLowerCase()); // 🔹 tanlangan tilni saqlash
+    setIsLangOpen(false);
+  };
 
   const navItems = [
-    { name: 'Biz haqimizda', href: '/about' },
-    { name: 'Ko‘chmas mulk', href: '/properties' },
-    { name: 'Yangiliklar', href: '/news' },
+    { name: t('nav_about'), href: '/about' },
+    { name: t('nav_properties'), href: '/properties' },
+    { name: t('nav_news'), href: '/news' },
     {
-      name: 'Turar joy majmuasi',
+      name: t('nav_residences'),
       subItems: [
         { name: 'Charx Novza', href: '/residences/charx', icon: '🏢' },
         { name: 'Do‘mbirobod Residence', href: '/residences/dombrovot', icon: '🏘️' },
@@ -71,26 +81,33 @@ export default function Navbar() {
     >
       {/* Yuqori qator */}
       <div className="flex items-center justify-between px-6 py-3 text-sm">
+        
         {/* Til tanlash */}
-        <div className="relative group cursor-pointer select-none">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-100 hover:text-black transition">
+        <div className="relative select-none" ref={langRef}>
+          <div
+            className="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-100 hover:text-black transition cursor-pointer"
+            onClick={() => setIsLangOpen((prev) => !prev)}
+          >
             <Flag code={lang} style={{ width: 24, height: 16, borderRadius: 3 }} />
             <span className="uppercase font-medium tracking-wide">{lang}</span>
           </div>
-          <div className="absolute left-0 mt-1 hidden group-hover:flex flex-col bg-white text-black rounded-md shadow-md overflow-hidden z-50 min-w-[100px]">
-            {['UZ', 'RU']
-              .filter((item) => item !== lang)
-              .map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setLang(item)}
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm"
-                >
-                  <Flag code={item} style={{ width: 20, height: 14, borderRadius: 3 }} />
-                  <span className="uppercase font-medium">{item}</span>
-                </button>
-              ))}
-          </div>
+
+          {isLangOpen && (
+            <div className="absolute left-0 mt-1 flex flex-col bg-white text-black rounded-md shadow-md overflow-hidden z-50 min-w-[100px]">
+              {['UZ', 'RU']
+                .filter((item) => item !== lang)
+                .map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => changeLang(item)}
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm"
+                  >
+                    <Flag code={item} style={{ width: 20, height: 14, borderRadius: 3 }} />
+                    <span className="uppercase font-medium">{item}</span>
+                  </button>
+                ))}
+            </div>
+          )}
         </div>
 
         {/* Logotip */}
@@ -128,13 +145,13 @@ export default function Navbar() {
       <nav className="flex items-center justify-center space-x-4 text-sm font-medium tracking-wide pb-3">
         {navItems.map((item) => {
           const isActive =
-            pathname.startsWith('/residences') && item.name === 'Turar joy majmuasi';
+            pathname.startsWith('/residences') && item.name === t('nav_residences');
 
           return (
             <div
               key={item.name}
               className="relative"
-              ref={item.name === 'Turar joy majmuasi' ? dropdownRef : null}
+              ref={item.name === t('nav_residences') ? dropdownRef : null}
             >
               {item.subItems ? (
                 <>

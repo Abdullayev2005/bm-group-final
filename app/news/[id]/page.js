@@ -1,20 +1,21 @@
-import dummyNews from '@/app/data/news';
+'use client';
+
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { getNewsData } from '@/app/data/newsData';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-// ✅ generateStaticParams qo‘shildi
-export async function generateStaticParams() {
-  return dummyNews.map((news) => ({
-    id: news.id.toString(),
-  }));
-}
+export default function NewsDetail() {
+  const { id } = useParams();
+  const [news, setNews] = useState(null);
 
-export default async function NewsDetail({ params }) {
-  const { id } = params;
+  useEffect(() => {
+    const allNews = getNewsData();
+    const found = allNews.find((n) => n.id === Number(id));
+    setNews(found);
+  }, [id]);
 
-  const news = dummyNews.find((n) => n.id === Number(id));
-
-  if (!news) return notFound();
+  if (!news) return <div>Loading...</div>;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-16">

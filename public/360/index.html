@@ -1,21 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
-  <meta charset="utf-8">
-  <title>BM Group 360 Tour</title>
+  <meta charset="utf-8" />
+  <title>BM Group 360 — Kirish</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
   <style>
-    #panorama {
-      width: 100vw;
-      height: 100vh;
+    html, body { margin: 0; padding: 0; }
+    #panorama { width: 100vw; height: 100vh; }
+
+    .custom-image-hotspot img { display: block; }
+
+    .bubble {
+      background: #005bbb;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font: 15px/1.6 "Segoe UI", sans-serif;
+      text-align: left;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      min-height: 80px;
+      max-width: 320px;
     }
 
-    .custom-image-hotspot {
-      width: auto;
-      height: auto;
-    }
-
-    .custom-link-button {
+    .cta {
       background-color: #ffffff;
       color: #005bbb;
       border: 1px solid #005bbb;
@@ -26,22 +33,12 @@
       display: inline-block;
       cursor: pointer;
       opacity: 0;
-      animation: fadeInButton 0.5s ease-in forwards 2.5s;
-      transition: all 0.3s ease;
+      animation: fadeInButton 0.5s ease-in forwards 2.0s;
+      transition: all 0.25s ease;
       margin-top: 8px;
     }
-
-    .custom-link-button:hover {
-      background-color: #005bbb;
-      color: white;
-      transform: scale(1.05);
-    }
-
-    @keyframes fadeInButton {
-      to {
-        opacity: 1;
-      }
-    }
+    .cta:hover { background:#005bbb; color:#fff; transform: translateY(-1px); }
+    @keyframes fadeInButton { to { opacity: 1; } }
   </style>
 </head>
 <body>
@@ -50,74 +47,113 @@
 
 <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script>
-  pannellum.viewer('panorama', {
-    "type": "equirectangular",
-    "panorama": "360tour.jpg",
-    "autoLoad": true,
-    "showZoomCtrl": false,
-    "showFullscreenCtrl": false,
-    "showControls": false,
-    "hotSpots": [
-      {
-        "pitch": -15,
-        "yaw": 45,
-        "type": "custom",
-        "cssClass": "custom-image-hotspot",
-        createTooltipFunc: function(hotSpotDiv) {
-          const container = document.createElement("div");
-          container.style.display = "flex";
-          container.style.flexDirection = "row";
-          container.style.alignItems = "flex-start";
-          container.style.gap = "16px";
+  // 1) Tarjimalar
+  const dict = {
+    uz: {
+      welcome: "BM Group qurilish kompaniyasiga xush kelibsiz. Batafsil ma'lumot uchun katta asosiy zalga oʻting.",
+      button:  "Asosiy zalga oʻtish"
+    },
+    ru: {
+      welcome: "Добро пожаловать в строительную компанию BM Group. Для подробной информации перейдите в главный зал.",
+      button:  "Перейти в главный зал"
+    }
+  };
 
-          const img = document.createElement("img");
-          img.src = "model.png";
-          img.style.width = "260px";
-          img.style.height = "auto";
-          container.appendChild(img);
+  // 2) Tanlangan til (Navbar localStorage’dan yozadi)
+  let currentLang = localStorage.getItem("lang") || "uz";
 
-          const messageWrapper = document.createElement("div");
-          messageWrapper.style.display = "flex";
-          messageWrapper.style.flexDirection = "column";
-          messageWrapper.style.maxWidth = "280px";
+  // 3) Tooltip yaratish (rasm + matn + tugma + yozib-berish effekti)
+  function createWelcomeTooltip(hotSpotDiv) {
+    const root = document.createElement("div");
+    root.style.display = "flex";
+    root.style.gap = "16px";
+    root.style.alignItems = "flex-start";
 
-          const message = document.createElement("div");
-          message.style.background = "#005bbb";
-          message.style.color = "#fff";
-          message.style.padding = "10px 16px";
-          message.style.borderRadius = "12px";
-          message.style.fontSize = "15px";
-          message.style.lineHeight = "1.6";
-          message.style.fontFamily = "Segoe UI, sans-serif";
-          message.style.textAlign = "left";
-          message.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-          message.style.minHeight = "80px";
-          messageWrapper.appendChild(message);
+    const img = document.createElement("img");
+    img.src = "model.png";           // public/index.html yoniga model.png joylashtiring
+    img.style.width = "260px";
+    img.style.height = "auto";
+    img.style.borderRadius = "8px";
+    img.style.boxShadow = "0 4px 12px rgba(0,0,0,0.12)";
+    root.appendChild(img);
 
-          const button = document.createElement("div");
-          button.innerText = "Asosiy zalga oʻtish";
-          button.className = "custom-link-button";
-          button.onclick = function () {
-            window.location.href = "asosiy.html";
-          };
-          messageWrapper.appendChild(button);
+    const col = document.createElement("div");
+    col.style.display = "flex";
+    col.style.flexDirection = "column";
 
-          container.appendChild(messageWrapper);
-          hotSpotDiv.appendChild(container);
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    col.appendChild(bubble);
 
-          const fullText = "BM Group qurilish kompaniyasiga xush kelibsiz. Batafsil ma'lumot uchun katta asosiy zalga oʻting.";
-          let i = 0;
-          function typeWriter() {
-            if (i < fullText.length) {
-              message.innerHTML += fullText.charAt(i);
-              i++;
-              setTimeout(typeWriter, 35);
-            }
-          }
-          typeWriter();
-        }
+    const btn = document.createElement("div");
+    btn.className = "cta";
+    btn.innerText = dict[currentLang].button;
+    btn.onclick = () => { window.location.href = "asosiy.html"; };
+    col.appendChild(btn);
+
+    root.appendChild(col);
+    hotSpotDiv.appendChild(root);
+
+    // matnni yozib berish (typewriter)
+    const text = dict[currentLang].welcome;
+    let i = 0;
+    (function type() {
+      if (i < text.length) {
+        bubble.innerHTML += text.charAt(i++);
+        setTimeout(type, 35);
       }
-    ]
+    })();
+  }
+
+  // 4) Viewer’ni chizish
+  function renderViewer() {
+    // Eski viewer qoldiqlarini tozalash
+    const holder = document.getElementById("panorama");
+    holder.innerHTML = "";
+
+    pannellum.viewer('panorama', {
+      type: "equirectangular",
+      panorama: "360tour.jpg", // public/index.html yoniga 360tour.jpg joylashtiring
+      autoLoad: true,
+      showZoomCtrl: false,
+      showFullscreenCtrl: false,
+      showControls: false,
+      hotSpots: [
+        {
+          pitch: -15,
+          yaw: 45,
+          type: "custom",
+          cssClass: "custom-image-hotspot",
+          createTooltipFunc: createWelcomeTooltip
+        }
+      ]
+    });
+  }
+
+  // 5) Boshlang'ich chizish
+  renderViewer();
+
+  // 6) Navbar’dan keladigan o‘zgarishni live qabul qilish (postMessage)
+  window.addEventListener("message", (e) => {
+    if (e && e.data && e.data.type === "changeLang") {
+      const lang = e.data.lang === "ru" ? "ru" : "uz";
+      if (lang !== currentLang) {
+        currentLang = lang;
+        localStorage.setItem("lang", currentLang);
+        renderViewer(); // reloadsiz qayta chizamiz
+      }
+    }
+  });
+
+  // 7) localStorage o‘zgarishini ham tinglab turamiz (agar boshqa taba/oynada o‘zgarsa)
+  window.addEventListener("storage", (e) => {
+    if (e.key === "lang") {
+      const lang = (e.newValue === "ru") ? "ru" : "uz";
+      if (lang !== currentLang) {
+        currentLang = lang;
+        renderViewer();
+      }
+    }
   });
 </script>
 
